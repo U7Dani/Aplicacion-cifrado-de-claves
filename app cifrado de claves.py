@@ -34,7 +34,7 @@ def hmac_message(message, key, hash_type):
     else:
         return None
 
-def encrypt_message(message, key, algo, nonce):
+def encrypt_message(message, key, algo, nonce, padding_type):
     key_bytes = bytes.fromhex(key)
     nonce_bytes = base64.b64decode(nonce) if nonce else None
     if algo == 'ChaCha20':
@@ -43,7 +43,10 @@ def encrypt_message(message, key, algo, nonce):
         nonce = base64.b64encode(cipher.nonce).decode('utf-8')
     elif algo == 'AES-CBC':
         cipher = AES.new(key_bytes, AES.MODE_CBC)
-        ct_bytes = cipher.encrypt(pad(message.encode(), AES.block_size))
+        if padding_type == 'PKCS7':
+            ct_bytes = cipher.encrypt(pad(message.encode(), AES.block_size))
+        else:
+            ct_bytes = cipher.encrypt(message.encode())
         nonce = base64.b64encode(cipher.iv).decode('utf-8')
     elif algo == 'AES-GCM':
         cipher = AES.new(key_bytes, AES.MODE_GCM, nonce=nonce_bytes)
@@ -53,7 +56,7 @@ def encrypt_message(message, key, algo, nonce):
     ct = base64.b64encode(ct_bytes).decode('utf-8')
     return nonce + ct
 
-def decrypt_message(ciphertext, key, algo, nonce):
+def decrypt_message(ciphertext, key, algo, nonce, padding_type):
     key_bytes = bytes.fromhex(key)
     nonce_bytes = base64.b64decode(ciphertext[:24])
     ct = base64.b64decode(ciphertext[24:])
@@ -62,7 +65,10 @@ def decrypt_message(ciphertext, key, algo, nonce):
         pt = cipher.decrypt(ct)
     elif algo == 'AES-CBC':
         cipher = AES.new(key_bytes, AES.MODE_CBC, iv=nonce_bytes)
-        pt = unpad(cipher.decrypt(ct), AES.block_size)
+        if padding_type == 'PKCS7':
+            pt = unpad(cipher.decrypt(ct), AES.block_size)
+        else:
+            pt = cipher.decrypt(ct)
     elif algo == 'AES-GCM':
         ct, tag = ct[:-16], ct[-16:]
         cipher = AES.new(key_bytes, AES.MODE_GCM, nonce=nonce_bytes)
@@ -101,7 +107,8 @@ def on_encrypt():
     key = key_entry.get()
     algo = algo_combo.get()
     nonce = nonce_entry.get()
-    result = encrypt_message(message, key, algo, nonce)
+    padding_type = padding_combo.get() if algo == 'AES-CBC' else None
+    result = encrypt_message(message, key, algo, nonce, padding_type)
     result_text.delete('1.0', tk.END)
     result_text.insert(tk.END, result)
 
@@ -110,8 +117,9 @@ def on_decrypt():
     key = key_entry.get()
     algo = algo_combo.get()
     nonce = nonce_entry.get()
+    padding_type = padding_combo.get() if algo == 'AES-CBC' else None
     try:
-        result = decrypt_message(ciphertext, key, algo, nonce)
+        result = decrypt_message(ciphertext, key, algo, nonce, padding_type)
     except Exception as e:
         messagebox.showerror("Error", f"Failed to decrypt: {str(e)}")
         return
@@ -145,6 +153,7 @@ def reset_fields():
     nonce_entry.delete(0, tk.END)
     hash_type_combo.current(0)
     algo_combo.current(0)
+    padding_combo.current(0)
     result_text.delete('1.0', tk.END)
 
 root = tk.Tk()
@@ -176,21 +185,26 @@ algo_combo = ttk.Combobox(mainframe, values=['ChaCha20', 'AES-CBC', 'AES-GCM'])
 algo_combo.grid(row=4, column=1, sticky=(tk.W, tk.E))
 algo_combo.current(0)
 
+ttk.Label(mainframe, text="Padding:").grid(row=5, column=0, sticky=tk.W)
+padding_combo = ttk.Combobox(mainframe, values=['PKCS7', 'None'])
+padding_combo.grid(row=5, column=1, sticky=(tk.W, tk.E))
+padding_combo.current(0)
+
 # Buttons
-ttk.Button(mainframe, text="Hash", command=on_hash).grid(row=5, column=0, sticky=tk.W)
-ttk.Button(mainframe, text="HMAC", command=on_hmac).grid(row=5, column=1, sticky=tk.W)
-ttk.Button(mainframe, text="Encrypt", command=on_encrypt).grid(row=5, column=2, sticky=tk.W)
-ttk.Button(mainframe, text="Decrypt", command=on_decrypt).grid(row=5, column=3, sticky=tk.W)
-ttk.Button(mainframe, text="Generate Key", command=generate_key).grid(row=6, column=0, sticky=tk.W)
-ttk.Button(mainframe, text="Generate Nonce", command=generate_nonce).grid(row=6, column=1, sticky=tk.W)
-ttk.Button(mainframe, text="Save Key", command=save_key).grid(row=6, column=2, sticky=tk.W)
-ttk.Button(mainframe, text="Load Key", command=load_key).grid(row=6, column=3, sticky=tk.W)
-ttk.Button(mainframe, text="Copy Result", command=copy_result).grid(row=7, column=2, sticky=tk.W)
-ttk.Button(mainframe, text="Reset", command=reset_fields).grid(row=7, column=3, sticky=tk.W)
+ttk.Button(mainframe, text="Hash", command=on_hash).grid(row=6, column=0, sticky=tk.W)
+ttk.Button(mainframe, text="HMAC", command=on_hmac).grid(row=6, column=1, sticky=tk.W)
+ttk.Button(mainframe, text="Encrypt", command=on_encrypt).grid(row=6, column=2, sticky=tk.W)
+ttk.Button(mainframe, text="Decrypt", command=on_decrypt).grid(row=6, column=3, sticky=tk.W)
+ttk.Button(mainframe, text="Generate Key", command=generate_key).grid(row=7, column=0, sticky=tk.W)
+ttk.Button(mainframe, text="Generate Nonce", command=generate_nonce).grid(row=7, column=1, sticky=tk.W)
+ttk.Button(mainframe, text="Save Key", command=save_key).grid(row=7, column=2, sticky=tk.W)
+ttk.Button(mainframe, text="Load Key", command=load_key).grid(row=7, column=3, sticky=tk.W)
+ttk.Button(mainframe, text="Copy Result", command=copy_result).grid(row=8, column=2, sticky=tk.W)
+ttk.Button(mainframe, text="Reset", command=reset_fields).grid(row=8, column=3, sticky=tk.W)
 
 # Result Text Box
-ttk.Label(mainframe, text="Result:").grid(row=8, column=0, sticky=tk.W)
+ttk.Label(mainframe, text="Result:").grid(row=9, column=0, sticky=tk.W)
 result_text = tk.Text(mainframe, width=60, height=10)
-result_text.grid(row=9, column=0, columnspan=4, sticky=(tk.W, tk.E))
+result_text.grid(row=10, column=0, columnspan=4, sticky=(tk.W, tk.E))
 
 root.mainloop()
