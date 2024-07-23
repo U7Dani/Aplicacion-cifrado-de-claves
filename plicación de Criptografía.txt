@@ -1,0 +1,117 @@
+Guía de Uso de la Aplicación de Criptografía
+Introducción
+Esta aplicación ha sido diseñada para realizar varias operaciones criptográficas, incluyendo cifrado y descifrado simétrico y asimétrico, hashing, HMAC y gestión de claves. Gracias a Felipe de Keepcoding, hemos aprendido mucho sobre criptografía y ahora podemos aplicar estos conocimientos con esta herramienta.
+
+Instalación y Configuración
+Requisitos Previos: Asegúrate de tener Python 3.12 instalado en tu sistema.
+Dependencias: Instala las bibliotecas necesarias utilizando pip:
+sh
+Copiar código
+pip install pycryptodome cryptography
+Ejecutar la Aplicación: Guarda el código de la aplicación en un archivo APP_criptografia.py y ejecuta el siguiente comando en tu terminal:
+sh
+Copiar código
+python APP_criptografia.py
+Componentes de la Aplicación
+La aplicación está dividida en varias pestañas: Cifrado Simétrico, Cifrado Asimétrico, Hashing y HMAC, y Gestión de Claves.
+
+1. Cifrado Simétrico
+El cifrado simétrico utiliza la misma clave para cifrar y descifrar los datos. Aquí se pueden realizar operaciones de cifrado y descifrado con algoritmos como AES y ChaCha20.
+
+Campos y Botones:
+
+Message: El mensaje que deseas cifrar o descifrar.
+Key: La clave de cifrado. Puedes generar una clave aleatoria haciendo clic en "Generate Key".
+Nonce: Un valor único usado una sola vez para cada operación de cifrado. Puedes generar un nonce haciendo clic en "Generate Nonce".
+Algorithm: Selecciona el algoritmo de cifrado (AES-CBC, AES-GCM, ChaCha20, ChaCha20-Poly1305).
+Padding: Selecciona el tipo de relleno (PKCS7, None).
+Encrypt: Cifra el mensaje utilizando la clave y el nonce proporcionados.
+Decrypt: Descifra el mensaje cifrado utilizando la clave y el nonce proporcionados.
+Result: Muestra el resultado del cifrado o descifrado.
+Ejemplo:
+
+Escribe el mensaje "Gracias a Felipe de Keepcoding he aprendido mucho de criptografía" en el campo "Message".
+Haz clic en "Generate Key" para generar una clave y copia la clave generada.
+Haz clic en "Generate Nonce" para generar un nonce y copia el nonce generado.
+Selecciona el algoritmo AES-CBC y el padding PKCS7.
+Haz clic en "Encrypt" y copia el resultado cifrado del campo "Result".
+Para descifrar:
+
+Pega el resultado cifrado en el campo "Message".
+Pega la misma clave en el campo "Key".
+Pega el mismo nonce en el campo "Nonce".
+Haz clic en "Decrypt" y verás el mensaje original en el campo "Result".
+2. Cifrado Asimétrico
+El cifrado asimétrico utiliza un par de claves: una clave pública para cifrar y una clave privada para descifrar. También se puede usar para firmar y verificar mensajes.
+
+Campos y Botones:
+
+Message: El mensaje que deseas cifrar o descifrar.
+Private Key Path: La ruta al archivo de la clave privada.
+Public Key Path: La ruta al archivo de la clave pública.
+Generate Key Pair: Genera un par de claves RSA y guarda los archivos en el sistema.
+Encrypt: Cifra el mensaje utilizando la clave pública.
+Decrypt: Descifra el mensaje cifrado utilizando la clave privada.
+Original Message: El mensaje original para verificar la firma.
+Verify: Verifica la firma del mensaje.
+Result: Muestra el resultado del cifrado, descifrado o verificación.
+Ejemplo:
+
+Haz clic en "Generate Key Pair" para generar un par de claves RSA y guarda los archivos.
+Escribe el mensaje "Gracias a Felipe de Keepcoding he aprendido mucho de criptografía" en el campo "Message".
+Selecciona la ruta del archivo de la clave pública generada en "Public Key Path".
+Haz clic en "Encrypt" y copia el resultado cifrado del campo "Result".
+Para descifrar:
+
+Pega el resultado cifrado en el campo "Message".
+Selecciona la ruta del archivo de la clave privada generada en "Private Key Path".
+Haz clic en "Decrypt" y verás el mensaje original en el campo "Result".
+3. Hashing y HMAC
+El hashing convierte los datos en un valor hash fijo que no puede revertirse al valor original. HMAC utiliza una clave para proporcionar autenticación y garantizar la integridad de los datos.
+
+Campos y Botones:
+
+Message: El mensaje que deseas hash o HMAC.
+Key (for HMAC): La clave para HMAC. Puedes generar una clave haciendo clic en "Generate HMAC Key".
+Hash Type: Selecciona el tipo de hash (sha256, sha512, sha3_256, sha3_512).
+Hash: Genera el hash del mensaje.
+HMAC: Genera el HMAC del mensaje utilizando la clave proporcionada.
+Result: Muestra el resultado del hash o HMAC.
+Ejemplo:
+
+Escribe el mensaje "Gracias a Felipe de Keepcoding he aprendido mucho de criptografía" en el campo "Message".
+Selecciona el tipo de hash sha256.
+Haz clic en "Hash" y copia el resultado del campo "Result".
+Para HMAC:
+
+Escribe el mensaje "Gracias a Felipe de Keepcoding he aprendido mucho de criptografía" en el campo "Message".
+Haz clic en "Generate HMAC Key" para generar una clave y copia la clave generada.
+Selecciona el tipo de hash sha256.
+Haz clic en "HMAC" y copia el resultado del campo "Result".
+4. Gestión de Claves
+La gestión de claves incluye la generación de claves maestras, derivación de claves, y el manejo de sal.
+
+Campos y Botones:
+
+Master Key: La clave maestra.
+Key Size: Selecciona el tamaño de la clave maestra.
+Generate Master Key: Genera una clave maestra.
+Save Key: Guarda la clave y la sal en un archivo.
+Load Key: Carga la clave y la sal desde un archivo.
+Derive Key: Deriva una clave a partir de la clave maestra y la sal.
+Salt: La sal utilizada en la derivación de la clave.
+Generate Salt: Genera una sal.
+Derived Key: Muestra la clave derivada.
+Copy Derived Key: Copia la clave derivada al portapapeles.
+Copy Salt: Copia la sal al portapapeles.
+Ejemplo:
+
+Selecciona el tamaño de la clave maestra en "Key Size".
+Haz clic en "Generate Master Key" para generar una clave maestra.
+Haz clic en "Generate Salt" para generar una sal.
+Haz clic en "Derive Key" para derivar una clave utilizando la clave maestra y la sal. La clave derivada aparecerá en el campo "Derived Key".
+Puedes guardar la clave y la sal haciendo clic en "Save Key" y cargarlas más tarde haciendo clic en "Load Key".
+Agradecimiento
+Gracias a Felipe de Keepcoding he aprendido mucho de criptografía. Esta aplicación es una herramienta poderosa para aplicar esos conocimientos y realizar operaciones criptográficas de manera segura y eficiente.
+
+Espero que esta guía te haya resultado útil y que disfrutes usando tu aplicación de criptografía. Si tienes alguna pregunta adicional o necesitas más ayuda, ¡no dudes en preguntar!
