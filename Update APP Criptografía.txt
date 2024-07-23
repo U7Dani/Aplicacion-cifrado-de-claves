@@ -5,13 +5,12 @@ Esta aplicación ha sido diseñada para realizar varias operaciones criptográfi
 Instalación y Configuración
 Requisitos Previos: Asegúrate de tener Python 3.12 instalado en tu sistema.
 Dependencias: Instala las bibliotecas necesarias utilizando pip:
-sh
-Copiar código
+
 pip install pycryptodome cryptography
 Ejecutar la Aplicación: Guarda el código de la aplicación en un archivo APP_criptografia.py y ejecuta el siguiente comando en tu terminal:
-sh
-Copiar código
+
 python APP_criptografia.py
+
 Componentes de la Aplicación
 La aplicación está dividida en varias pestañas: Cifrado Simétrico, Cifrado Asimétrico, Hashing y HMAC, y Gestión de Claves.
 
